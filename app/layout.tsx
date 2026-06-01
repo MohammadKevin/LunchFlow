@@ -20,9 +20,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'LunchFlow',
+  title: 'PesanOnline - Pesan Lebih Cepat Tanpa Ribet',
   description:
-    'Smart canteen ordering platform with QRIS payment, smart queue, pickup & delivery, and WhatsApp notifications.',
+    'PesanOnline membantu bisnis menerima pesanan, pembayaran digital, notifikasi realtime, dan pengiriman lebih cepat dalam satu tempat.',
 }
 
 export default function RootLayout({

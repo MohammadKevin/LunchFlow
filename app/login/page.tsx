@@ -1,223 +1,241 @@
 'use client'
 
 import Link from 'next/link'
-
 import { useRouter } from 'next/navigation'
-
 import { useState } from 'react'
-
 import {
   Eye,
   EyeOff,
   ArrowLeft,
+  Mail,
+  Lock,
+  Loader2,
+  Sparkles,
+  CheckCircle,
 } from 'lucide-react'
-
 import { toast } from 'sonner'
-
 import { api } from '@/lib/api'
 
 export default function LoginPage() {
   const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
 
-  const [showPassword, setShowPassword] =
-    useState(false)
-
-  const [isLoading, setIsLoading] =
-    useState(false)
-
-  const [formData, setFormData] =
-    useState({
-      email: '',
-      password: '',
-    })
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]:
-        e.target.value,
+      [e.target.name]: e.target.value,
     })
   }
 
-  const handleSubmit = async (
-    e: React.FormEvent,
-  ) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     try {
       setIsLoading(true)
 
-      const response =
-        await api.post(
-          '/auth/login',
-          formData,
-        )
-
+      const response = await api.post('/auth/login', formData)
       const data = response.data
 
-      localStorage.setItem(
-        'accessToken',
-        data.accessToken,
-      )
-
-      localStorage.setItem(
-        'user',
-        JSON.stringify(data.user),
-      )
-
+      localStorage.setItem('accessToken', data.accessToken)
+      localStorage.setItem('user', JSON.stringify(data.user))
       document.cookie = `accessToken=${data.accessToken}; path=/`
 
-      toast.success(
-        'Login berhasil',
-      )
+      toast.success('Login berhasil')
 
-      switch (
-        data.user.role
-      ) {
+      switch (data.user.role) {
         case 'ADMIN':
-          router.push(
-            '/dashboard/admin',
-          )
+          router.push('/dashboard/admin')
           break
 
-        case 'SELLER':
-          router.push(
-            '/dashboard/seller',
-          )
+        case 'KASIR':
+          router.push('/dashboard/kasir')
           break
 
-        case 'CUSTOMER':
-          router.push(
-            '/dashboard/customer',
-          )
+        case 'PELANGGAN':
+          router.push('/dashboard/pelanggan')
           break
 
         default:
           router.push('/')
       }
     } catch (error: any) {
-      toast.error(
-        error?.response?.data
-          ?.message ||
-          'Login gagal',
-      )
+      toast.error(error?.response?.data?.message || 'Login gagal')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center bg-orange-50 px-4 py-6 sm:px-6 lg:px-8">
-      <button
-        onClick={() =>
-          router.push('/')
-        }
-        className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md transition hover:text-orange-500 sm:left-6 sm:top-6"
-      >
-        <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+    <main className="relative min-h-screen bg-[#fafcf9] text-slate-900 antialiased selection:bg-green-200 grid lg:grid-cols-12">
 
-        <span>Kembali</span>
-      </button>
+      {/* LEFT SIDE: Back Button & Authentication Form */}
+      <section className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-8 lg:p-12 bg-white relative z-10 shadow-xl lg:shadow-none">
 
-      <div className="w-full max-w-md rounded-[2rem] bg-white p-6 shadow-xl sm:p-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-black text-gray-900 sm:text-4xl">
-            Selamat Datang
-          </h1>
+        {/* Top Navigation */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => router.push('/')}
+            className="group inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:bg-slate-50 hover:text-green-600 active:scale-[0.98]"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+            <span>Kembali ke Beranda</span>
+          </button>
+        </div>
 
-          <p className="mt-3 text-sm text-gray-500 sm:text-base">
-            Masuk untuk menggunakan
-            LunchFlow
+        {/* Central Form Container */}
+        <div className="w-full max-w-md mx-auto my-auto py-12 space-y-8">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-1.5 rounded-md bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-700 uppercase tracking-wider">
+              Sistem Otentikasi
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              Selamat Datang
+            </h1>
+            <p className="text-sm text-slate-500">
+              Masuk untuk mengelola pesanan Anda di <span className="font-semibold text-green-600">LunchFlow</span>
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Input Email */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wide block">
+                Alamat Email
+              </label>
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-green-600 transition-colors">
+                  <Mail className="h-5 w-5" />
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="nama@perusahaan.com"
+                  className="h-12 w-full rounded-2xl border border-slate-200 pl-12 pr-4 text-sm bg-slate-50/50 outline-none transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                />
+              </div>
+            </div>
+
+            {/* Input Password */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wide block">
+                  Kata Sandi
+                </label>
+                <Link href="#" className="text-xs font-semibold text-green-600 hover:underline">
+                  Lupa Password?
+                </Link>
+              </div>
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-green-600 transition-colors">
+                  <Lock className="h-5 w-5" />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="••••••••••••"
+                  className="h-12 w-full rounded-2xl border border-slate-200 pl-12 pr-12 text-sm bg-slate-50/50 outline-none transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-green-600 text-sm font-bold text-white shadow-md shadow-green-600/10 transition-all hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.99]"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Menghubungkan...</span>
+                </>
+              ) : (
+                <span>Masuk Ke Dashboard</span>
+              )}
+            </button>
+          </form>
+
+          {/* Registration Redirect */}
+          <p className="text-center text-sm text-slate-500">
+            Belum memiliki akun bisnis?{' '}
+            <Link href="/register" className="font-bold text-green-600 hover:text-green-500 hover:underline transition-colors">
+              Daftar Sekarang
+            </Link>
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-5"
-        >
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Email
-            </label>
-
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={
-                handleChange
-              }
-              required
-              placeholder="Masukkan email"
-              className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Password
-            </label>
-
-            <div className="relative">
-              <input
-                type={
-                  showPassword
-                    ? 'text'
-                    : 'password'
-                }
-                name="password"
-                value={
-                  formData.password
-                }
-                onChange={
-                  handleChange
-                }
-                required
-                placeholder="Masukkan password"
-                className="h-12 w-full rounded-2xl border border-gray-200 px-4 pr-12 text-sm outline-none transition focus:border-orange-500"
-              />
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowPassword(
-                    !showPassword,
-                  )
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="h-12 w-full rounded-2xl bg-orange-500 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isLoading
-              ? 'Loading...'
-              : 'Masuk'}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-gray-500">
-          Belum punya akun?{' '}
-          <Link
-            href="/register"
-            className="font-semibold text-orange-500 hover:underline"
-          >
-            Daftar
-          </Link>
+        {/* Footer Meta */}
+        <p className="text-center text-[11px] text-slate-400">
+          &copy; 2026 LunchFlow & PesanOnline. Hak Cipta Dilindungi.
         </p>
-      </div>
-    </section>
+      </section>
+
+      {/* RIGHT SIDE: Premium SaaS Promotion & Decorative Showcase */}
+      <section className="hidden lg:col-span-7 bg-[#041e10] relative lg:flex flex-col justify-between p-12 overflow-hidden">
+        {/* Background Gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(34,197,94,0.12),transparent_60%)]" />
+        <div className="absolute top-[-20%] right-[-20%] h-[600px] w-[600px] rounded-full bg-emerald-500/10 blur-[130px] pointer-events-none" />
+
+        {/* Top Accent Decorative */}
+        <div className="flex justify-end relative z-10">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-emerald-300 backdrop-blur-sm">
+            <Sparkles className="h-3.5 w-3.5 text-green-400" />
+            <span>Enkripsi Sesi End-to-End Aktif</span>
+          </div>
+        </div>
+
+        {/* Visual Content Middle Showcase */}
+        <div className="max-w-xl mx-auto space-y-8 relative z-10 my-auto text-left">
+          <div className="space-y-4">
+            <h2 className="text-4xl font-extrabold tracking-tight text-white leading-tight">
+              Akselerasi Manajemen <br />
+              Pesanan Kuliner Anda.
+            </h2>
+            <p className="text-base text-emerald-100/60 leading-relaxed">
+              Pantau arus transaksi konsumen, sinkronisasi pengiriman kurir pihak ketiga, serta kelola sistem pembayaran otomatis multi-peran dalam satu platform terpusat.
+            </p>
+          </div>
+
+          {/* Trust points card simulation */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              'Otomatisasi Laporan Finansial',
+              'SLA Kecepatan API < 5ms',
+              'Notifikasi Instan WhatsApp',
+              'Multi-Hak Akses Akun Terintegrasi',
+            ].map((text, idx) => (
+              <div key={idx} className="flex items-center gap-3 rounded-xl bg-white/[0.03] border border-white/5 p-3.5">
+                <CheckCircle className="h-4 w-4 text-green-400 flex-shrink-0" />
+                <span className="text-xs font-semibold text-slate-200">{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Status */}
+        <div className="flex items-center justify-between border-t border-white/5 pt-6 text-xs text-emerald-100/30 relative z-10">
+          <span>Infrastruktur Cloud: AWS Jakarta</span>
+          <span>Status Sistem: 99.9% Operasional</span>
+        </div>
+      </section>
+
+    </main>
   )
 }

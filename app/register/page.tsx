@@ -1,130 +1,59 @@
 'use client'
 
 import Link from 'next/link'
-
 import { useRouter } from 'next/navigation'
-
 import { useState } from 'react'
-
 import {
   Eye,
   EyeOff,
   ArrowLeft,
+  User,
+  Mail,
+  Lock,
+  Loader2,
+  Sparkles,
+  CheckCircle2,
 } from 'lucide-react'
-
 import { toast } from 'sonner'
-
 import { api } from '@/lib/api'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [showPassword, setShowPassword] =
-    useState(false)
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+  })
 
-  const [isLoading, setIsLoading] =
-    useState(false)
-
-  const [selectedRole, setSelectedRole] =
-    useState<
-      'CUSTOMER' | 'SELLER'
-    >('CUSTOMER')
-
-  const [formData, setFormData] =
-    useState({
-      fullName: '',
-      email: '',
-      phone: '',
-      password: '',
-      storeName: '',
-      ownerName: '',
-      address: '',
-      description: '',
-      openTime: '',
-      closeTime: '',
-    })
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement
-    >,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-
-      [e.target.name]:
-        e.target.value,
+      [e.target.name]: e.target.value,
     })
   }
 
-  const handleSubmit = async (
-    e: React.FormEvent,
-  ) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     try {
       setIsLoading(true)
 
-      const endpoint =
-        selectedRole ===
-        'SELLER'
-          ? '/auth/register/seller'
-          : '/auth/register/customer'
+      // Menggunakan endpoint pendaftaran konvensional untuk pelanggan
+      await api.post('/auth/register    ', {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      })
 
-      const payload =
-        selectedRole ===
-        'SELLER'
-          ? {
-              fullName:
-                formData.fullName,
-              email:
-                formData.email,
-              password:
-                formData.password,
-              phone:
-                formData.phone,
-              storeName:
-                formData.storeName,
-              ownerName:
-                formData.ownerName,
-              address:
-                formData.address,
-              description:
-                formData.description,
-              openTime:
-                formData.openTime,
-              closeTime:
-                formData.closeTime,
-            }
-          : {
-              fullName:
-                formData.fullName,
-              email:
-                formData.email,
-              password:
-                formData.password,
-              phone:
-                formData.phone,
-            }
-
-      await api.post(
-        endpoint,
-        payload,
-      )
-
-      toast.success(
-        `Berhasil daftar sebagai ${selectedRole}`,
-      )
-
+      toast.success('Pendaftaran akun berhasil!')
       router.push('/login')
     } catch (error: any) {
-      console.log(error)
-
       toast.error(
-        error?.response?.data
-          ?.message ||
+        error?.response?.data?.message ||
           error?.message ||
-          'Register gagal',
+          'Pendaftaran akun gagal'
       )
     } finally {
       setIsLoading(false)
@@ -132,321 +61,178 @@ export default function RegisterPage() {
   }
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center bg-orange-50 px-4 py-6 sm:px-6 lg:px-8">
-      <button
-        onClick={() =>
-          router.push('/')
-        }
-        className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md transition hover:text-orange-500 sm:left-6 sm:top-6"
-      >
-        <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-
-        <span>Kembali</span>
-      </button>
-
-      <div className="w-full max-w-2xl rounded-[2rem] bg-white p-6 shadow-xl sm:p-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-black text-gray-900 sm:text-4xl">
-            Daftar Akun
-          </h1>
-
-          <p className="mt-3 text-sm text-gray-500 sm:text-base">
-            Pilih jenis akun yang ingin dibuat
-          </p>
-        </div>
-
-        <div className="mt-6 grid grid-cols-2 gap-3">
+    <main className="relative min-h-screen bg-[#fafcf9] text-slate-900 antialiased selection:bg-green-200 grid lg:grid-cols-12">
+      
+      {/* LEFT SIDE: Registration Form */}
+      <section className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-8 lg:p-12 bg-white relative z-10 shadow-xl lg:shadow-none">
+        
+        {/* Top Navigation */}
+        <div className="flex items-center justify-between">
           <button
-            type="button"
-            onClick={() =>
-              setSelectedRole(
-                'CUSTOMER',
-              )
-            }
-            className={`h-12 rounded-2xl text-sm font-semibold transition ${
-              selectedRole ===
-              'CUSTOMER'
-                ? 'bg-orange-500 text-white'
-                : 'border border-gray-200 bg-white text-gray-700'
-            }`}
+            onClick={() => router.push('/')}
+            className="group inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:bg-slate-50 hover:text-green-600 active:scale-[0.98]"
           >
-            Customer
-          </button>
-
-          <button
-            type="button"
-            onClick={() =>
-              setSelectedRole(
-                'SELLER',
-              )
-            }
-            className={`h-12 rounded-2xl text-sm font-semibold transition ${
-              selectedRole ===
-              'SELLER'
-                ? 'bg-orange-500 text-white'
-                : 'border border-gray-200 bg-white text-gray-700'
-            }`}
-          >
-            Seller
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+            <span>Kembali ke Beranda</span>
           </button>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-5"
-        >
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Nama Lengkap
-              </label>
-
-              <input
-                type="text"
-                name="fullName"
-                value={
-                  formData.fullName
-                }
-                onChange={
-                  handleChange
-                }
-                required
-                placeholder="Masukkan nama lengkap"
-                className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-              />
+        {/* Form Container */}
+        <div className="w-full max-w-md mx-auto my-auto py-12 space-y-8">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-1.5 rounded-md bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-700 uppercase tracking-wider">
+              Registrasi Pelanggan
             </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Email
-              </label>
-
-              <input
-                type="email"
-                name="email"
-                value={
-                  formData.email
-                }
-                onChange={
-                  handleChange
-                }
-                required
-                placeholder="Masukkan email"
-                className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-              />
-            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              Buat Akun Anda
+            </h1>
+            <p className="text-sm text-slate-500">
+              Bergabunglah bersama <span className="font-semibold text-green-600">LunchFlow</span> untuk menikmati layanan pemesanan kuliner terbaik.
+            </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Nomor Telepon
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Input Nama Lengkap */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide block">
+                Nama Lengkap
               </label>
-
-              <input
-                type="text"
-                name="phone"
-                value={
-                  formData.phone
-                }
-                onChange={
-                  handleChange
-                }
-                required={
-                  selectedRole ===
-                  'SELLER'
-                }
-                placeholder="Masukkan nomor telepon"
-                className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-              />
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-green-600 transition-colors" />
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  required
+                  placeholder="Nama lengkap Anda"
+                  className="h-12 w-full rounded-2xl border border-slate-200 pl-11 pr-4 text-xs bg-slate-50/50 outline-none transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Password
+            {/* Input Email */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide block">
+                Alamat Email
               </label>
-
-              <div className="relative">
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-green-600 transition-colors" />
                 <input
-                  type={
-                    showPassword
-                      ? 'text'
-                      : 'password'
-                  }
-                  name="password"
-                  value={
-                    formData.password
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   required
-                  placeholder="Masukkan password"
-                  className="h-12 w-full rounded-2xl border border-gray-200 px-4 pr-12 text-sm outline-none transition focus:border-orange-500"
+                  placeholder="nama@email.com"
+                  className="h-12 w-full rounded-2xl border border-slate-200 pl-11 pr-4 text-xs bg-slate-50/50 outline-none transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
                 />
+              </div>
+            </div>
 
+            {/* Input Kata Sandi */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide block">
+                Kata Sandi
+              </label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-green-600 transition-colors" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Minimal 6 karakter"
+                  className="h-12 w-full rounded-2xl border border-slate-200 pl-11 pr-11 text-xs bg-slate-50/50 outline-none transition-all focus:border-green-500 focus:bg-white focus:ring-4 focus:ring-green-500/10"
+                />
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword(
-                      !showPassword,
-                    )
-                  }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
-          </div>
 
-          {selectedRole ===
-            'SELLER' && (
-            <>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Nama Toko
-                  </label>
+            {/* Submit Register Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-green-600 text-xs font-bold text-white shadow-md shadow-green-600/10 transition-all hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.99]"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Memproses Akun...</span>
+                </>
+              ) : (
+                <span>Daftar Akun Baru</span>
+              )}
+            </button>
+          </form>
 
-                  <input
-                    type="text"
-                    name="storeName"
-                    value={
-                      formData.storeName
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    required
-                    placeholder="Masukkan nama toko"
-                    className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-                  />
-                </div>
+          {/* Login Redirect */}
+          <p className="text-center text-xs text-slate-500">
+            Sudah memiliki akun?{' '}
+            <Link href="/login" className="font-bold text-green-600 hover:text-green-500 hover:underline transition-colors">
+              Masuk Sekarang
+            </Link>
+          </p>
+        </div>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Nama Owner
-                  </label>
-
-                  <input
-                    type="text"
-                    name="ownerName"
-                    value={
-                      formData.ownerName
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    required
-                    placeholder="Masukkan nama owner"
-                    className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Alamat
-                </label>
-
-                <textarea
-                  name="address"
-                  value={
-                    formData.address
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  required
-                  placeholder="Masukkan alamat toko"
-                  className="min-h-[100px] w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-orange-500"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Deskripsi
-                </label>
-
-                <textarea
-                  name="description"
-                  value={
-                    formData.description
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  placeholder="Deskripsi toko"
-                  className="min-h-[100px] w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-orange-500"
-                />
-              </div>
-
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Jam Buka
-                  </label>
-
-                  <input
-                    type="time"
-                    name="openTime"
-                    value={
-                      formData.openTime
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Jam Tutup
-                  </label>
-
-                  <input
-                    type="time"
-                    name="closeTime"
-                    value={
-                      formData.closeTime
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    className="h-12 w-full rounded-2xl border border-gray-200 px-4 text-sm outline-none transition focus:border-orange-500"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="h-12 w-full rounded-2xl bg-orange-500 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isLoading
-              ? 'Loading...'
-              : `Daftar sebagai ${selectedRole}`}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-gray-500">
-          Sudah punya akun?{' '}
-          <Link
-            href="/login"
-            className="font-semibold text-orange-500 hover:underline"
-          >
-            Login
-          </Link>
+        {/* Footer Meta */}
+        <p className="text-center text-[10px] text-slate-400">
+          &copy; 2026 LunchFlow & PesanOnline. Hak Cipta Dilindungi Undang-Undang.
         </p>
-      </div>
-    </section>
+      </section>
+
+      {/* RIGHT SIDE: Premium Promotional Showcase Panel */}
+      <section className="hidden lg:col-span-7 bg-[#041e10] relative lg:flex flex-col justify-between p-12 overflow-hidden">
+        {/* Background Gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(34,197,94,0.15),transparent_60%)]" />
+        <div className="absolute bottom-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
+
+        {/* Top Feature Tag */}
+        <div className="flex justify-end relative z-10">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-emerald-300 backdrop-blur-sm">
+            <Sparkles className="h-3.5 w-3.5 text-green-400" />
+            <span>Pengalaman Transaksi Instan</span>
+          </div>
+        </div>
+
+        {/* Marketing Center Text */}
+        <div className="max-w-md mx-auto space-y-6 relative z-10 my-auto text-left">
+          <h2 className="text-3xl font-extrabold tracking-tight text-white leading-tight">
+            Pesan Hidangan <br />
+            Favorit Tanpa Antre.
+          </h2>
+          <p className="text-xs sm:text-sm text-emerald-100/60 leading-relaxed">
+            Nikmati kemudahan memesan makanan harian secara digital, pelacakan status pesanan langsung dari dapur mitra, serta integrasi sistem pembayaran nontunai yang aman.
+          </p>
+          
+          <div className="grid gap-3 pt-4 border-t border-white/5">
+            {[
+              'Metode Pembayaran QRIS & E-Wallet Instan',
+              'Pelacakan Real-time Pesanan Anda',
+              'Notifikasi Otomatis Melalui WhatsApp',
+            ].map((text, idx) => (
+              <div key={idx} className="flex items-center gap-3 rounded-xl bg-white/[0.02] border border-white/5 p-3">
+                <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
+                <span className="text-xs text-slate-300">{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* System Server Status */}
+        <div className="flex items-center justify-between border-t border-white/5 pt-6 text-[10px] text-emerald-100/30 relative z-10">
+          <span>Server Gateway: AWS Jakarta</span>
+          <span>Security Compliance: End-to-End Encrypted</span>
+        </div>
+      </section>
+
+    </main>
   )
 }

@@ -1,6 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import {
+  useEffect,
+  useState,
+} from 'react'
 
 import { toast } from 'sonner'
 
@@ -8,13 +11,20 @@ import { api } from '@/lib/api'
 
 type Payment = {
   id: string
-  paymentMethod: string
-  paymentStatus: string
-  paymentProof: string | null
+
+  paymentMethod:
+    | 'QRIS'
+    | 'TUNAI'
+
+  paymentStatus:
+    | 'PENDING'
+    | 'PAID'
+    | 'FAILED'
+
   createdAt: string
-  paidAt: string | null
 
   order: {
+    id: string
     orderCode: string
     totalPrice: number
   }
@@ -24,24 +34,43 @@ export default function PaymentsPage() {
   const [payments, setPayments] =
     useState<Payment[]>([])
 
-  const [isLoading, setIsLoading] =
+  const [loading, setLoading] =
     useState(true)
 
   const fetchPayments =
     async () => {
       try {
         const response =
-          await api.get('/payments')
+          await api.get(
+            '/payments/history',
+            {
+              params: {
+                page: 1,
+                limit: 20,
+              },
+            },
+          )
 
-        setPayments(response.data)
-      } catch (error) {
-        console.log(error)
+        setPayments(
+          response.data
+            ?.data ??
+            response.data,
+        )
+      } catch (
+        error: any
+      ) {
+        console.log(
+          error?.response,
+        )
 
         toast.error(
-          'Failed to fetch payments',
+          error?.response
+            ?.data
+            ?.message ||
+            'Gagal mengambil pembayaran',
         )
       } finally {
-        setIsLoading(false)
+        setLoading(false)
       }
     }
 
@@ -49,152 +78,177 @@ export default function PaymentsPage() {
     fetchPayments()
   }, [])
 
-  if (isLoading) {
+  const statusColor = (
+    status: string,
+  ) => {
+    switch (
+      status
+    ) {
+      case 'PAID':
+        return 'bg-green-100 text-green-700'
+
+      case 'FAILED':
+        return 'bg-red-100 text-red-700'
+
+      default:
+        return 'bg-yellow-100 text-yellow-700'
+    }
+  }
+
+  if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
-        <p className="text-lg font-medium text-gray-500">
-          Loading payments...
-        </p>
+        <div className="text-center">
+
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-green-200 border-t-green-600" />
+
+          <p className="mt-4 text-gray-500">
+            Memuat pembayaran...
+          </p>
+
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+
       <div>
-        <h1 className="text-3xl font-black text-gray-900">
-          Payments
+
+        <h1 className="text-4xl font-black">
+          Riwayat Pembayaran
         </h1>
 
         <p className="mt-2 text-gray-500">
-          Manage all payment
-          transactions.
+          Kelola transaksi pembayaran.
         </p>
+
       </div>
 
-      <div className="overflow-hidden rounded-3xl bg-white shadow-sm">
+      <div className="overflow-hidden rounded-3xl border bg-white">
+
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px]">
-            <thead className="border-b bg-gray-50">
-              <tr className="text-left text-sm text-gray-500">
-                <th className="px-6 py-4">
+
+          <table className="w-full">
+
+            <thead className="bg-green-50">
+
+              <tr>
+
+                <th className="px-6 py-5 text-left">
                   Order
                 </th>
 
-                <th className="px-6 py-4">
-                  Method
+                <th className="px-6 py-5 text-left">
+                  Metode
                 </th>
 
-                <th className="px-6 py-4">
+                <th className="px-6 py-5 text-left">
                   Status
                 </th>
 
-                <th className="px-6 py-4">
+                <th className="px-6 py-5 text-left">
                   Total
                 </th>
 
-                <th className="px-6 py-4">
-                  Proof
+                <th className="px-6 py-5 text-left">
+                  Tanggal
                 </th>
 
-                <th className="px-6 py-4">
-                  Created At
-                </th>
               </tr>
+
             </thead>
 
             <tbody>
+
               {payments.map(
-                (payment) => (
+                (
+                  payment,
+                ) => (
                   <tr
-                    key={payment.id}
-                    className="border-b last:border-none"
+                    key={
+                      payment.id
+                    }
+                    className="border-t"
                   >
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-6 py-5 font-semibold">
                       {
-                        payment.order
+                        payment
+                          .order
                           ?.orderCode
                       }
                     </td>
 
-                    <td className="px-6 py-4">
-                      <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-600">
+                    <td className="px-6 py-5">
+
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700">
+
                         {
                           payment.paymentMethod
                         }
+
                       </span>
+
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5">
+
                       <span
-                        className={`rounded-full px-3 py-1 text-sm font-medium ${
-                          payment.paymentStatus ===
-                          'PAID'
-                            ? 'bg-green-100 text-green-600'
-                            : payment.paymentStatus ===
-                                'FAILED'
-                              ? 'bg-red-100 text-red-600'
-                              : 'bg-yellow-100 text-yellow-600'
-                        }`}
+                        className={`rounded-full px-3 py-1 text-sm font-semibold ${statusColor(
+                          payment.paymentStatus,
+                        )}`}
                       >
                         {
                           payment.paymentStatus
                         }
                       </span>
+
                     </td>
 
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-6 py-5 font-bold text-green-700">
+
                       Rp{' '}
+
                       {Number(
-                        payment.order
+                        payment
+                          .order
                           ?.totalPrice,
                       ).toLocaleString(
                         'id-ID',
                       )}
+
                     </td>
 
-                    <td className="px-6 py-4">
-                      {payment.paymentProof ? (
-                        <a
-                          href={
-                            payment.paymentProof
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium text-orange-500 hover:underline"
-                        >
-                          View Proof
-                        </a>
-                      ) : (
-                        <span className="text-sm text-gray-400">
-                          No Proof
-                        </span>
-                      )}
-                    </td>
+                    <td className="px-6 py-5 text-gray-500">
 
-                    <td className="px-6 py-4 text-gray-600">
                       {new Date(
                         payment.createdAt,
-                      ).toLocaleDateString(
+                      ).toLocaleString(
                         'id-ID',
                       )}
+
                     </td>
+
                   </tr>
                 ),
               )}
+
             </tbody>
+
           </table>
 
           {payments.length ===
             0 && (
-            <div className="py-16 text-center">
-              <p className="text-gray-500">
-                No payments found.
-              </p>
+            <div className="py-20 text-center text-gray-500">
+              Belum ada pembayaran.
             </div>
           )}
+
         </div>
+
       </div>
+
     </div>
   )
 }

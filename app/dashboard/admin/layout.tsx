@@ -1,7 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+
+import {
+  usePathname,
+  useRouter,
+} from 'next/navigation'
+
 import {
   CreditCard,
   LayoutDashboard,
@@ -9,189 +14,330 @@ import {
   Menu,
   Package,
   ShoppingBag,
-  Tags,
   Users,
   X,
+  UtensilsCrossed,
 } from 'lucide-react'
-import { useState } from 'react'
+
+import {
+  useEffect,
+  useState,
+} from 'react'
 
 export default function AdminLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
-  const router = useRouter()
-  const pathname = usePathname()
+}) {
+  const router =
+    useRouter()
 
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname =
+    usePathname()
+
+  const [
+    mobile,
+    setMobile,
+  ] =
+    useState(false)
+
+  const [
+    user,
+    setUser,
+  ] =
+    useState({
+      name:
+        'Super Admin',
+
+      email:
+        'admin@email.com',
+    })
+
+  useEffect(() => {
+    const stored =
+      localStorage.getItem(
+        'user',
+      )
+
+    if (stored) {
+      const parsed =
+        JSON.parse(
+          stored,
+        )
+
+      setUser({
+        name:
+          parsed.fullName ||
+          parsed.name,
+
+        email:
+          parsed.email,
+      })
+    }
+  }, [])
 
   const menus = [
     {
-      title: 'Dashboard',
-      href: '/dashboard/admin',
-      icon: LayoutDashboard,
+      title:
+        'Dashboard',
+
+      href:
+        '/dashboard/admin',
+
+      icon:
+        LayoutDashboard,
     },
+
     {
-      title: 'Users',
-      href: '/dashboard/admin/users',
-      icon: Users,
+      title:
+        'Pengguna',
+
+      href:
+        '/dashboard/admin/users',
+
+      icon:
+        Users,
     },
+
     {
-      title: 'Sellers',
-      href: '/dashboard/admin/sellers',
-      icon: ShoppingBag,
+      title:
+        'Menu',
+
+      href:
+        '/dashboard/admin/menus',
+
+      icon:
+        UtensilsCrossed,
     },
+
     {
-      title: 'Categories',
-      href: '/dashboard/admin/categories',
-      icon: Tags,
+      title:
+        'Pesanan',
+
+      href:
+        '/dashboard/admin/orders',
+
+      icon:
+        Package,
     },
+
     {
-      title: 'Orders',
-      href: '/dashboard/admin/orders',
-      icon: Package,
-    },
-    {
-      title: 'Payments',
-      href: '/dashboard/admin/payments',
-      icon: CreditCard,
+      title:
+        'Pembayaran',
+
+      href:
+        '/dashboard/admin/payments',
+
+      icon:
+        CreditCard,
     },
   ]
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('user')
-    router.push('/')
-  }
+  const logout =
+    () => {
+      localStorage.clear()
+
+      document.cookie =
+        'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+
+      router.replace(
+        '/',
+      )
+    }
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-gray-50">
-      {isOpen && (
-        <div
-          onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
-        />
-      )}
+    <div className="min-h-screen bg-[#f7faf7]">
 
-      <aside
-        className={`fixed left-0 top-0 z-50 flex h-dvh w-72 flex-col border-r bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="flex h-20 shrink-0 items-center justify-between border-b px-6">
-          <Link
-            href="/dashboard/admin"
-            className="flex items-center gap-3"
-          >
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-500 text-white">
-              <ShoppingBag className="h-5 w-5" />
-            </div>
+      <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
 
-            <div>
-              <h1 className="text-lg font-black text-gray-900">
-                LunchFlow
-              </h1>
+        <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-6">
 
-              <p className="text-sm text-gray-500">
-                Admin Panel
-              </p>
-            </div>
-          </Link>
+          <div className="flex items-center gap-10">
 
-          <button
-            onClick={() => setIsOpen(false)}
-            className="lg:hidden"
-          >
-            <X className="h-6 w-6 text-gray-700" />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="space-y-2">
-            {menus.map((menu) => {
-              const Icon = menu.icon
-
-              const isActive =
-                pathname === menu.href
-
-              return (
-                <Link
-                  key={menu.title}
-                  href={menu.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition ${
-                    isActive
-                      ? 'bg-orange-500 text-white'
-                      : 'text-gray-600 hover:bg-orange-50 hover:text-orange-500'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-
-                  <span className="font-medium">
-                    {menu.title}
-                  </span>
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-
-        <div className="shrink-0 border-t bg-white p-4">
-          <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-red-500 transition hover:bg-red-50"
-          >
-            <LogOut className="h-5 w-5" />
-
-            <span className="font-medium">
-              Logout
-            </span>
-          </button>
-        </div>
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex h-20 shrink-0 items-center justify-between border-b bg-white px-4 sm:px-6">
-          <div className="flex min-w-0 items-center gap-4">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border bg-white lg:hidden"
+            <Link
+              href="/dashboard/admin"
+              className="flex items-center gap-3"
             >
-              <Menu className="h-5 w-5" />
-            </button>
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-600 text-white">
 
-            <div className="min-w-0">
-              <h2 className="truncate text-lg font-black text-gray-900 sm:text-2xl">
-                Admin Dashboard
-              </h2>
+                <ShoppingBag />
 
-              <p className="truncate text-xs text-gray-500 sm:text-sm">
-                Welcome back admin 👋
-              </p>
-            </div>
+              </div>
+
+              <div>
+
+                <h1 className="font-black">
+                  PesanOnline
+                </h1>
+
+                <p className="text-xs text-gray-400">
+                  Admin
+                </p>
+
+              </div>
+
+            </Link>
+
+            <nav className="hidden gap-2 lg:flex">
+
+              {menus.map(
+                (
+                  menu,
+                ) => {
+                  const Icon =
+                    menu.icon
+
+                  const active =
+                    pathname.startsWith(
+                      menu.href,
+                    )
+
+                  return (
+                    <Link
+                      key={
+                        menu.href
+                      }
+                      href={
+                        menu.href
+                      }
+                      className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition ${
+                        active
+                          ? 'bg-green-600 text-white'
+                          : 'text-gray-500 hover:bg-gray-100'
+                      }`}
+                    >
+                      <Icon size={18} />
+
+                      {
+                        menu.title
+                      }
+
+                    </Link>
+                  )
+                },
+              )}
+
+            </nav>
+
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="hidden text-right md:block">
-              <h3 className="font-semibold text-gray-900">
-                Super Admin
-              </h3>
 
-              <p className="text-sm text-gray-500">
-                kvn4.200581@gmail.com
-              </p>
+            <div className="hidden md:flex items-center gap-3">
+
+              <div className="text-right">
+
+                <h3 className="text-sm font-bold">
+                  {
+                    user.name
+                  }
+                </h3>
+
+                <p className="text-xs text-gray-400">
+                  {
+                    user.email
+                  }
+                </p>
+
+              </div>
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 font-bold text-green-700">
+
+                {user.name?.[0]}
+
+              </div>
+
             </div>
 
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 font-bold text-white">
-              SA
-            </div>
+            <button
+              onClick={
+                logout
+              }
+              className="hidden rounded-xl border p-3 text-red-500 hover:bg-red-50 lg:flex"
+            >
+              <LogOut />
+            </button>
+
+            <button
+              onClick={() =>
+                setMobile(
+                  !mobile,
+                )
+              }
+              className="rounded-xl border p-3 lg:hidden"
+            >
+              {mobile ? (
+                <X />
+              ) : (
+                <Menu />
+              )}
+            </button>
+
           </div>
-        </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          {children}
-        </main>
-      </div>
+        </div>
+
+        {mobile && (
+          <div className="border-t bg-white p-4 lg:hidden">
+
+            <div className="space-y-2">
+
+              {menus.map(
+                (
+                  menu,
+                ) => {
+                  const Icon =
+                    menu.icon
+
+                  return (
+                    <Link
+                      key={
+                        menu.href
+                      }
+                      href={
+                        menu.href
+                      }
+                      onClick={() =>
+                        setMobile(
+                          false,
+                        )
+                      }
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-gray-50"
+                    >
+                      <Icon />
+
+                      {
+                        menu.title
+                      }
+
+                    </Link>
+                  )
+                },
+              )}
+
+              <button
+                onClick={
+                  logout
+                }
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-600"
+              >
+                <LogOut />
+
+                Logout
+
+              </button>
+
+            </div>
+
+          </div>
+        )}
+
+      </header>
+
+      <main className="mx-auto max-w-[1600px] p-6">
+        {children}
+      </main>
+
     </div>
   )
 }
