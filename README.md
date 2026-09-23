@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# LunchFlow
 
-First, run the development server:
+<p>Catering & Lunch Box Pre-Order Management Web Platform</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+![Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-blue?style=flat-square) ![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=flat-square) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-blue?style=flat-square) ![Lucide Icons](https://img.shields.io/badge/Lucide%20Icons-blue?style=flat-square) ![REST API](https://img.shields.io/badge/REST%20API-blue?style=flat-square)
+
+</div>
+
+---
+
+## 📌 Overview
+LunchFlow streamlines corporate and school lunch orders, allowing users to browse weekly menus, customize dietary preferences, and place recurring meal subscriptions seamlessly.
+
+---
+
+## ✨ Key Features
+- ⚡ **Dynamic weekly meal catalog with nutrition facts and pricing**: Dynamic weekly meal catalog with nutrition facts and pricing
+- ⚡ **Custom meal selection and pre-order scheduling**: Custom meal selection and pre-order scheduling
+- ⚡ **User authentication and profile subscription history**: User authentication and profile subscription history
+- ⚡ **Responsive, mobile-optimized ordering interface**: Responsive, mobile-optimized ordering interface
+
+---
+
+## 🛠️ Tech Stack
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS, Class Variance Authority, Radix UI
+- **HTTP**: Axios
+
+---
+
+## 📁 Project Structure
+```text
+LunchFlow/
+├── app/                # Next.js App Router structure
+│   ├── (auth)/         # Login & Register views
+│   ├── (public)/       # Menu catalog & Landing page
+│   └── dashboard/      # Order history & active meal plans
+├── components/         # Reusable UI widgets
+└── lib/                # API client configuration
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites
+Make sure you have the required runtimes and tools installed on your machine:
+- Node.js (v18+ recommended) / Appropriate runtime
+- Git
 
-## Learn More
+### Installation & Local Setup
+```bash
+git clone https://github.com/MohammadKevin/LunchFlow.git
+cd LunchFlow
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👤 Author
+**Mohammad Kevin Arif Rudianto**
+- **GitHub:** [@MohammadKevin](https://github.com/MohammadKevin)
+- **Portfolio:** [portfolio-mohammadkevin.vercel.app](https://portfolio-mohammadkevin.vercel.app)
+- **LinkedIn:** [Mohammad Kevin](https://www.linkedin.com/in/mohammad-kevin-arif-rudianto-945733347)
+- **Email:** [kvn4.200581@gmail.com](mailto:kvn4.200581@gmail.com)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📄 License
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<div align="center">
+⭐️ If you found this repository useful, please consider giving it a star!
+</div>
