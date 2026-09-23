@@ -18,10 +18,10 @@ LunchFlow streamlines corporate and school lunch orders, allowing users to brows
 ---
 
 ## ✨ Key Features
-- ⚡ **Dynamic weekly meal catalog with nutrition facts and pricing**: Dynamic weekly meal catalog with nutrition facts and pricing
-- ⚡ **Custom meal selection and pre-order scheduling**: Custom meal selection and pre-order scheduling
-- ⚡ **User authentication and profile subscription history**: User authentication and profile subscription history
-- ⚡ **Responsive, mobile-optimized ordering interface**: Responsive, mobile-optimized ordering interface
+- Dynamic weekly meal catalog with nutrition facts and pricing
+- Custom meal selection and pre-order scheduling
+- User authentication and profile subscription history
+- Responsive, mobile-optimized ordering interface
 
 ---
 
