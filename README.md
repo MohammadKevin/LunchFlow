@@ -12,12 +12,12 @@
 
 ---
 
-## 📌 Overview
+## Overview
 LunchFlow streamlines corporate and school lunch orders, allowing users to browse weekly menus, customize dietary preferences, and place recurring meal subscriptions seamlessly.
 
 ---
 
-## ✨ Key Features
+## Key Features
 - Dynamic weekly meal catalog with nutrition facts and pricing
 - Custom meal selection and pre-order scheduling
 - User authentication and profile subscription history
@@ -25,7 +25,7 @@ LunchFlow streamlines corporate and school lunch orders, allowing users to brows
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Framework**: Next.js (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS, Class Variance Authority, Radix UI
@@ -33,7 +33,7 @@ LunchFlow streamlines corporate and school lunch orders, allowing users to brows
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 ```text
 LunchFlow/
 ├── app/                # Next.js App Router structure
@@ -46,7 +46,7 @@ LunchFlow/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 Make sure you have the required runtimes and tools installed on your machine:
@@ -63,7 +63,7 @@ npm run dev
 
 ---
 
-## 👤 Author
+## Author
 **Mohammad Kevin Arif Rudianto**
 - **GitHub:** [@MohammadKevin](https://github.com/MohammadKevin)
 - **Portfolio:** [portfolio-mohammadkevin.vercel.app](https://portfolio-mohammadkevin.vercel.app)
@@ -72,9 +72,9 @@ npm run dev
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 <div align="center">
-⭐️ If you found this repository useful, please consider giving it a star!
+If you found this repository useful, please consider giving it a star!
 </div>
